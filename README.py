@@ -23,18 +23,17 @@ class Writer(object):
         self.handler.write('\n')
         return self
 
-    def write(self, line, space="", prefix='- '):
-        self.handler.write('\n')
-        self.handler.write(space + prefix + line + '\n')
+    def write(self, line, space="", prefix='- ', parent='.'):
+        self.handler.write(f'\n{space}{prefix} [{line}]({join(parent, line)})\n')
 
-    def writeContents(self, contents, space=""):
+    def writeContents(self, contents, space="", parent='.'):
         for content in contents:
             if isinstance(content, str):
-                self.write(content, space=space)
+                self.write(content, space=space, parent=parent)
             elif isinstance(content, dict):
                 for k, v in content.items():
                     self.write(k, space=space)
-                    self.writeContents(v, space=space + "  ")
+                    self.writeContents(v, space=space + "    ", parent=join(parent, k))
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.handler.close()
